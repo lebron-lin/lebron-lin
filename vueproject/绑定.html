@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>第一个案例</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+        <!-- <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script> -->
+    </head>
+    <body>
+        <div id="root">
+            单向绑定：<input type="text" :value="name">
+            <br />
+            双向绑定：<input type="text" v-model="name">
+        </div>
+        
+        <script type="text/javascript">
+            Vue.config.productionTip = false;
+            
+
+            //创建Vue实例
+            new Vue({
+                el:'#root', //用于指定当前vue实例为哪个t容器服务
+                data:{
+                    name: 'linda',
+                }
+            });
+
+        </script>
+    </body>
+</html>

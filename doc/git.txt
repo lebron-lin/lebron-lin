@@ -1,0 +1,11 @@
+token  : UGizRJGX7FIhpKeVtXSpCCGDBKfeTHRZ+Vi+R3mUj90
+ssh-keygen -t rsa -C "2389809764@qq.com"
+
+git remote add origin  https://github.com/lebron-lin/lebron-lin.git
+
+
+
+
+personalToken : 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
+
+git remote set-url origin https://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@github.com/lebron-lin/lebron-lin.git
