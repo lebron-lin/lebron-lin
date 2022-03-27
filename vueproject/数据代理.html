@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>回顾Object.defineProperty方法</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+        <!-- <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script> -->
+    </head>
+    <body>
+        <script type="text/javascript">
+            Vue.config.productionTip = false;
+             
+            let number = 19;
+
+            let person = {
+                name:'linda',
+                sex:'男',
+            }
+
+            Object.defineProperty(person,'age',{
+                // value:10,
+                // enumerable:true,//是否可以被枚举 Object.keys(person)
+                // writable:true,//是否可以被修改
+                // configurable:true,//是否可以被删除
+
+                get(){
+                    return number;
+                },
+
+                set(value){
+                    number = value
+                }
+            });
+
+
+            console.log(person);
+            console.log(Object.keys(person));
+        </script>
+    </body>
+</html>
