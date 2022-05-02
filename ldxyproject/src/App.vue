@@ -2,15 +2,16 @@
     <div id="root">
         <div class="todo-container">
             <div class="todo-wrap">
-                <ToDoHeader :add="add" />
-                <ToDoList :todoList="todoList" :checkTodo="checkTodo" :deleteTodo="deleteTodo"/>
-                <ToDoFooter />
+                <ToDoHeader @add="add" />
+                <ToDoList :todoList="todoList" />
+                <ToDoFooter v-show="todoList.length > 0" :todoList="todoList" @checkAllTodo="checkAllTodo" @clearCompleted="clearCompleted"/>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import pubsub from 'pubsub-js'
 import ToDoHeader from './components/ToDoList/ToDoHeader.vue'
 import ToDoList from './components/ToDoList/ToDoList.vue'
 import ToDoFooter from './components/ToDoList/ToDoFooter.vue'
@@ -24,12 +25,14 @@ export default {
     },
     data() {
         return {
-            todoList:[
-                {id:'0001',title:'抽烟',isdone:true},
-                {id:'0002',title:'喝酒',isdone:false},
-                {id:'0003',title:'烫头',isdone:true}
-            ]
+            todoList:JSON.parse(localStorage.getItem("todoList")) || [],
         }
+    },
+    mounted() {
+        this.$bus.$on("checkTodo",this.checkTodo);
+        this.pubId = pubsub.subscribe("deleteTodo",this.deleteTodo);
+        //this.$bus.$on("deleteTodo",this.deleteTodo);
+        this.$bus.$on("updateTodo",this.updateTodo);
     },
     methods: {
         //添加
@@ -45,9 +48,43 @@ export default {
             })
         },
         //删除
-        deleteTodo(id){
+        deleteTodo(_,id){
             this.todoList = this.todoList.filter(todo => todo.id !== id);
+        },
+        //编辑
+        updateTodo(id,value){
+            this.todoList.forEach((todo) => {
+                if(todo.id === id){
+                    todo.title = value;
+                }
+            });
+        },
+        //是否全选
+        checkAllTodo(val){
+            this.todoList.forEach((todo) => {
+                todo.isdone = val;
+            });
+        },
+        //清除已完成任务
+        clearCompleted(){
+            this.todoList = this.todoList.filter((todo) => {
+                return !todo.isdone;
+            });
         }
+    },
+    watch:{
+        todoList:{
+            deep: true,
+            handler(value){
+                localStorage.setItem('todoList', JSON.stringify(value));
+            }
+        }
+    },
+    beforeDestroy(){
+        this.$bus.$off("checkTodo");
+        //this.$bus.$off("deleteTodo");
+        pubsub.unsubscribe(this.pubId);
+        this.$bus.$off("updateTodo");
     }
 }
 </script>
@@ -79,6 +116,13 @@ export default {
     .btn-danger:hover {
         color: #fff;
         background-color: #bd362f;
+    }
+
+    .btn-edit {
+        color: #fff;
+        background-color: skyblue;
+        border: 1px solid rgba(103, 159, 180, 0.2);
+        margin-right: 5px;
     }
 
     .btn:focus {

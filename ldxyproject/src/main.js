@@ -4,6 +4,9 @@ import App from './App.vue'
 Vue.config.productionTip = false
 
 new Vue({
-  el: "#root",
-  render: h => h(App),
+    el: "#root",
+    render: h => h(App),
+    beforeCreate(){
+      Vue.prototype.$bus = this;//绑定全局事件总线
+    }
 })

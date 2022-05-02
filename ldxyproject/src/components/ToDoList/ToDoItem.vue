@@ -2,24 +2,49 @@
     <li>
         <label>
             <input type="checkbox" :checked="todoItem.isdone" @change="handlecheck(todoItem.id)">
-            <span>{{todoItem.title}}</span>
+            <span v-show="!todoItem.isEdit">{{todoItem.title}}</span>
+            <input ref="inputTitle" type="text" v-show="todoItem.isEdit" :value="todoItem.title" @blur="handleBlur(todoItem,$event)">
         </label>
         <button class="btn btn-danger" @click="deleteTodoItem(todoItem.id)">删除</button>
+        <button v-show="!todoItem.isEdit" class="btn btn-edit" @click="editTodoItem(todoItem)">编辑</button>
     </li>
 </template>
 
 <script>
+import pubsub from 'pubsub-js'
 export default {
     name: 'ToDoItem',
     //接受父组件得传值
-    props: ['todoItem','checkTodo','deleteTodo'],
+    props: ['todoItem'],
     methods: {
         handlecheck(id){
-            this.checkTodo(id);
+            this.$bus.$emit("checkTodo",id);
         },
+        //编辑
+        editTodoItem(todoItem){
+            if(Object.prototype.hasOwnProperty.call(todoItem, "isEdit")){
+                todoItem.isEdit = true;
+            }else{
+                this.$set(todoItem,"isEdit",true);
+            }
+            this.$nextTick(function(){
+                this.$refs.inputTitle.focus();
+            })
+        },
+        //失去焦点
+        handleBlur(todoItem,e){
+            todoItem.isEdit = false;
+            if(!e.target.value.trim()){
+                alert("输入不能为空!")
+                return;
+            }
+            this.$bus.$emit("updateTodo",todoItem.id,e.target.value);
+        },
+        //删除
         deleteTodoItem(id){
             if(confirm('确定删除嘛?')){
-                this.deleteTodo(id);
+                pubsub.publish("deleteTodo",id);
+                //this.$bus.$emit("deleteTodo",id);
             }
         }
     },

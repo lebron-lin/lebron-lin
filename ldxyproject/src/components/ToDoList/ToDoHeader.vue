@@ -8,7 +8,6 @@
 import {nanoid} from 'nanoid'
 export default {
     name: 'ToDoHeader',
-    props: ['add'],
     data() {
         return {
             title:''
@@ -17,8 +16,8 @@ export default {
     methods: {
         addtodo(){
             if(!this.title.trim()) return alert("输入不可为空!");
-            const todoObj = {id:nanoid(),title:this.title,done:false};
-            this.add(todoObj);
+            const todoObj = {id:nanoid(),title:this.title,isdone:false};
+            this.$emit("add",todoObj);
             this.title = "";
         }
     }
